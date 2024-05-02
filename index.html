@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/league.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+      <style>
+        .highlight {
+          color: #4eb2fa;
+        }
+        .small-text {
+          font-size: 10px;
+          color: #5f5f93;
+        }
+      </style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+              <section>
+                <h2>What is State and State Management?</h2>
+                <p class="fragment"><strong class="highlight">State:</strong> Data your app needs to track</p>
+                <p class="fragment"><strong class="highlight">State Management:</strong> How state is updated and accessed across your app</p>
+                <aside class="notes">
+                  Hello, Today we gonna talk about what state and  state management are and what is the basic idea of Redux.
+                  "State" is any data that describes the current behavior of an application. This could include values like "a list of objects fetched from the server", "name of the currently logged-in user", etc. It's like a snapshot of what's happening inside the app at any given moment.
+
+                  State management refers to the process of storing, updating, and retrieving data within an application. It helps to ensure that the data displayed to the user is always accurate and up-to-date. State management is essential for building complex applications that require data to be shared across multiple components or pages.
+                </aside>
+              </section>
+              <section>
+                <h2>The Problems with Managing State</h2>
+                <ul>
+                  <li><strong class="highlight">Data Consistency:</strong> Ensuring data remains accurate across the app</li>
+                  <li><strong class="highlight">Data Management:</strong> Handling large volumes of data effectively</li>
+                  <li><strong class="highlight">Performance:</strong> Keeping the app responsive as complexity grows</li>
+                  <li><strong class="highlight">Maintainability:</strong> Ensuring the codebase remains understandable and manageable</li>
+                </ul>
+                <aside class="notes">
+                  State management in a large and complicated frontend application can be difficult for various reasons:
+                  There might be problems with data consistency, data management, performance and maintainability:
+                  - Ensuring that data is consistent throughout different portions of an application can be difficult, especially if the data is being modified by multiple components or users.
+                  - As the size and complexity of an application develop, it can become increasingly challenging to keep track of all the many kinds of data that are being utilized and how they are related.
+                  - Performance difficulties might also arise from poor state management, such as unnecessary re-rendering of components or delayed UI updates.
+                  - Plus without adequate state management, an application can become difficult to maintain and update over time, since it becomes more difficult to comprehend how various elements of the application are connected and how they rely on one another.
+                </aside>
+              </section>
+              <section>
+                <h2>What is Redux?</h2>
+                <img src="./assets/redux-icon.png" alt="Redux Icon" style="width: 100px; height: auto;">
+                <p>JS library for predictable and maintainable global state management</p>
+                <aside class="notes">
+                  There are various techniques to state management in frontend development, each with advantages and disadvantages.
+                  We might use state management libraries to manage the state in our applications.
+                  So what is Redux?
+                  Redux is a very popular JavaScript library for managing application state. It is most commonly used with React or Angular for building user interfaces. But it can be used in your vanilla TS project too.
+                  Redux helps you manage "global" state - state that is needed across many parts of your application.
+                  The patterns and tools provided by Redux make it easier to understand when, where, why, and how the state in your application is being updated, and how your application logic will behave when those changes occur.
+                </aside>
+              </section>
+              <section>
+                <h2>One-way data flow</h2>
+                <figure class="fragment fade-left">
+                  <img src="./assets/one-way-data-flow.png" alt="Data flow" style="width: 80%; height: auto;">
+                  <figcaption class="small-text">https://redux.js.org/tutorials/essentials/part-1-overview-concepts#state-management</figcaption>
+                </figure>
+                <aside class="notes">
+                  Redux uses a "one-way data flow" app structure.
+                  Here is a small example of "one-way data flow":
+                  - State describes the condition of the app at a specific point in time.
+                  - The UI is rendered based on that state.
+                  When something happens (such as a user clicking a button), the state is updated based on what occurred. The UI re-renders based on the new state
+                  However, this simplicity can break down when we have multiple components that need to share and use the same state, especially if those components are located in different parts of the application. Do you remember? I already mentioned before the problems with managing the state.
+                  Sometimes this can be solved by "lifting state up" to parent components, but that doesn't always help.
+
+                  One way to solve this is to extract the shared state from the components, and put it into a centralized location outside the component tree. With this, our component tree becomes a big "view", and any component can access the state or trigger actions, no matter where they are in the tree!
+
+
+                  This is the basic idea behind Redux: a single centralized place to contain the global state in your application, and specific patterns to follow when updating that state to make the code predictable.
+                </aside>
+              </section>
+              <section>
+                <h2>Actions</h2>
+                <pre data-id="code-animation"><code class="hljs javascript" data-trim data-line-numbers>
+                  {
+                  type: 'ADD_ITEM_TO_CART'
+                  payload: {
+                  bookName: 'Harry Potter and the Goblet of Fire',
+                  noOfItem: 1,
+                  }
+                  }
+                </code></pre>
+                <aside class="notes">
+                  There are some important Redux terms that we need to be familiar with.
+                  An action is a plain JavaScript object that has a type field. We can think of an action as an event that describes something that happened in the application.
+                  The type field should be a string that gives this action a descriptive name.
+                  An action object can have other fields with additional information about what happened. By convention, we put that information in a field called payload.
+                    For example, when a user clicks a button, we might dispatch an action like the one you can see on screen.
+                </aside>
+              </section>
+              <section>
+                <h2>Action Creators</h2>
+                <pre data-id="code-animation"><code class="hljs javascript" data-trim data-line-numbers>
+                  const addToCart = (name, num) => {
+                  return {
+                  type: 'ADD_ITEM_TO_CART',
+                  payload: {
+                  bookName: name,
+                  noOfItem: num,
+                  }
+                  }
+                  }</code></pre>
+                <aside class="notes">
+                  An action creator is a function that creates and returns an action object. We typically use these so we don't have to write the action object by hand every time.
+                </aside>
+              </section>
+              <section>
+                <h2>Reducers</h2>
+                <p>(state, action) => newState</p>
+                <pre data-id="code-animation"><code class="hljs javascript" data-trim data-line-numbers>
+                  const initialState = { value: 0 }
+                  function counterReducer(state = initialState, action) {
+                  // Check to see if the reducer cares about this action
+                  if (action.type === 'counter/increment') {
+                  // If so, make a copy of `state`
+                  return {
+                  ...state,
+                  // and update the copy with the new value
+                  value: state.value + 1
+                  }
+                  }
+                  // otherwise return the existing state unchanged
+                  return state
+                  }</code></pre>
+                <aside class="notes">
+                  A reducer is a function that receives the current state and an action object, decides how to update the state if necessary, and returns the new state.
+                  Reducers must always follow some specific rules:
+                  1. They should only calculate the new state value based on the state and action arguments
+                  2. They are not allowed to modify the existing state. Instead, they must make immutable updates, by copying the existing state and making changes to the copied values.
+                  3. They must not do any asynchronous logic, calculate random values, or cause other "side effects"
+                  The logic inside reducer functions typically follows the same series of steps:
+                  - Check to see if the reducer cares about this action
+                  - If so, make a copy of the state, update the copy with new values, and return it
+                  - Otherwise, return the existing state unchanged
+                </aside>
+              </section>
+              <section>
+                <h2>Store</h2>
+                <pre data-id="code-animation"><code class="hljs javascript" data-trim data-line-numbers>
+                  import { configureStore } from '@reduxjs/toolkit'
+                  const store = configureStore({ reducer: counterReducer })
+                  console.log(store.getState())
+                  // {value: 0}
+                </code></pre>
+                <aside class="notes">
+                  The current Redux application state lives in an object called the store.
+                  The store is created by passing in a reducer, and has a method called getState that returns the current state value
+                </aside>
+              </section>
+              <section>
+                <h2>Dispatch</h2>
+                <pre data-id="code-animation"><code class="hljs javascript" data-trim data-line-numbers>
+                  const increment = () => {
+                  return {
+                  type: 'counter/increment'
+                  }
+                  }
+
+                  store.dispatch(increment())
+
+                  console.log(store.getState())
+                  // {value: 2}
+                </code></pre>
+                <aside class="notes">
+                  The Redux store has a method called dispatch. The only way to update the state is to call store.dispatch() and pass in an action object. The store will run its reducer function and save the new state value inside, and we can call getState() to retrieve the updated value.
+                  We can think of dispatching actions as "triggering an event" in the application. Something happened, and we want the store to know about it. Reducers act like event listeners, and when they hear an action they are interested in, they update the state in response.
+                </aside>
+              </section>
+              <section>
+                <h2>Principles of Redux</h2>
+                <ul>
+                  <li class="fragment"><strong class="highlight">Single Source of Truth:</strong> The state of your entire application is stored in one place, called the store.</li>
+                  <li class="fragment"><strong class="highlight">State is Read-Only:</strong> The only way to change the state is to emit an action, an object describing what happened.</li>
+                  <li class="fragment"><strong class="highlight">Changes Are Made with Pure Functions:</strong> To specify how the state tree is transformed by actions, you write pure reducers.</li>
+                </ul>
+                <aside class="notes">
+                  After we talked about basic concepts of Redux, it's time to mention 3 main principles you need to be aware of when dealing with Redux.
+                  1. Single Source of Truth - The global state of your application is stored in an object tree within a single store.
+                  2. State is Read-Only - This ensures that neither the views nor the network callbacks will ever write directly to the state. Instead, they express an intent to transform the state. Because all changes are centralized and happen one by one in a strict order, there are no race conditions to watch out for.
+                  3. Reducers are just pure functions that take the previous state and an action, and return the next state. We return new state objects, instead of mutating the previous state.
+                </aside>
+              </section>
+              <section>
+                <h2>Redux cycle</h2>
+                <figure>
+                  <img src="./assets/ReduxDataFlowDiagram.gif" alt="Redux cycle" style="width: 70%; height: auto;">
+                  <figcaption class="small-text">Source: https://redux.js.org/tutorials/essentials/part-1-overview-concepts#state-management</figcaption>
+                </figure>
+                <aside class="notes">
+                  Earlier, we talked about "one-way data flow", which describes this sequence of steps to update the app.
+                  For Redux specifically, we can break these steps into more detail:
+
+                  First, initial setup:
+                  1.1. A Redux store is created using a root reducer function
+                  1.2. The store calls the root reducer once, and saves the return value as its initial state
+                  1.3. When the UI is first rendered, UI components access the current state of the Redux store, and use that data to decide what to render. They also subscribe to any future store updates so they can know if the state has changed.
+
+                  Now how updates are handled:
+                  2.1. Something happens in the app, such as a user clicking a button
+                  2.2. The app code dispatches an action to the Redux store, like dispatch({type: 'counter/increment'})
+                  2.3. The store runs the reducer function again with the previous state and the current action, and saves the return value as the new state
+                  2.4. The store notifies all parts of the UI that are subscribed that the store has been updated
+                  2.5. Each UI component that needs data from the store checks to see if the parts of the state they need have changed.
+                  2.6. Each component that sees its data has changed forces a re-render with the new data, so it can update what's shown on the screen
+                </aside>
+              </section>
+              <section>
+                <h2>SUMMARY</h2>
+                <li class="fragment"><strong class="highlight">Redux</strong> is a library for managing global application state</li>
+                  <li class="fragment">Redux uses a <strong class="highlight">"one-way data flow"</strong> app structure</li>
+                </ul>
+                <aside class="notes">So, Redux is a popular library for managing global application state. Of course, I just mentioned few general aspects of what Redux id and there is still much to learn: Redux Toolkit as the recommended way to build production apps with Redux nowadays, managing async logic with Redux, etc.</aside>
+              </section>
+            </div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+              transition: 'convex',
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
